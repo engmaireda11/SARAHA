@@ -29,10 +29,17 @@ export const generateLimiter =({
     return rateLimit({
   windowMs: ttl * 60 * 1000,
   standardHeaders,
-  limit: async function (req) {
-  if (NODE_ENV === "development") return limit;
+limit: async function (req) {
   const data = await fromWhere(req.ip);
-  return data?.country == "EG" ? limit : 0;
+
+  console.log("IP:", req.ip);
+  console.log("Country:", data?.country);
+
+  if (NODE_ENV === "development") return limit;
+
+  if (!data) return limit;
+
+  return data.country === "EG" ? limit : 0;
 },
    legacyHeaders,
    
